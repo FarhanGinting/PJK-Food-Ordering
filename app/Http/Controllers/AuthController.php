@@ -23,6 +23,23 @@ class AuthController extends Controller
             ]);
         }
 
-        return $user->createToken('sanctum')->plainTextToken;
+        unset(
+            $user->email_verified_at, 
+            $user->created_at,
+            $user->updated_at,
+            $user->deleted_at,
+        );
+        
+        $user->tokens()->delete();
+        $token = $user->createToken('sanctum')->plainTextToken;
+        $user->token = $token;
+        
+        return response(['data' => $user]);
+        
+        
+    }
+
+    public function me () {
+        return response(['data' => auth()->user()]);
     }
 }

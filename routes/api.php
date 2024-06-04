@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,18 +13,25 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
-*/
+ */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+ // Route Group Auth
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
+});
 
-Route::post('/auth/login', [AuthController::class, 'login']);
+//Route Group Middleware Auth Sanctum
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/create-order', function () {
+        return 'create order';
+    })->middleware(['ableCreateOrder']);
+    
+    Route::post('/finish-order', function () {
+        return 'finish order';
+    })->middleware(['ableFinishOrder']);
 
-Route::post('/create-order', function () {
-    return 'create order';
-})->middleware(['auth:sanctum', 'ableCreateOrder']);
+    Route::post('/user', [UserController::class, 'store'])->middleware(['ableCreateUser']);
+});
 
-Route::post('/finish-order', function () {
-    return 'finish order';
-})->middleware(['auth:sanctum', 'ableFinishOrder']);
+

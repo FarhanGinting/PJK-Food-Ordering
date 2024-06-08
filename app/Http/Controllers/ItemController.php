@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
+    public function index(){
+        $data = Item::select('id', 'name', 'price', 'image')->get();
+        return response(['Data' => $data]);
+    }
+
     public function store (Request $request){
         $request->validate([
             'name' => 'required|max:100',
@@ -49,7 +54,7 @@ class ItemController extends Controller
 
         $dataInputan = Item::findOrFail($id);
         $dataInputan->update($request->all());
-        return response(['data' => $dataInputan]);
+        return response(['Data' => $dataInputan]);
     }
     
 }
